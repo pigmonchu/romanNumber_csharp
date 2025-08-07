@@ -60,6 +60,8 @@ public class RomanNumberTests
     }
 
     [Theory]
+    [InlineData("", 0)]
+
     [InlineData("I", 1)]
     [InlineData("II", 2)]
     [InlineData("III", 3)]
@@ -109,6 +111,25 @@ public class RomanNumberTests
         var result = new RomanNumber(representation);
         Assert.Equal(value, result.value);
     }
-    
-    
+
+    [Theory]
+    [InlineData("IIII", typeof(FormatException))]
+    [InlineData("VV", typeof(FormatException))]
+    [InlineData("IL", typeof(FormatException))]
+    [InlineData("IC", typeof(FormatException))]
+    [InlineData("XD", typeof(FormatException))]
+    [InlineData("VX", typeof(FormatException))]
+    [InlineData("LC", typeof(FormatException))]
+    [InlineData("MMMM", typeof(FormatException))]
+    [InlineData("IIV", typeof(FormatException))]
+    [InlineData("IM", typeof(FormatException))]
+    [InlineData("ABC", typeof(FormatException))]
+    [InlineData(null, typeof(ArgumentNullException))]
+    public void RomanNumber_errores_de_formato_al_crear(string representation, Type exceptionType)
+    {
+        var ex = Record.Exception(() => new RomanNumber(representation));
+        Assert.NotNull(ex);
+        Assert.IsType(exceptionType, ex);
+    }
+
 }

@@ -23,12 +23,12 @@ public class RomanNumber
         var sb = new StringBuilder();   
         while (value > 0)
         {
-            foreach (RomanDigit d in RomanDigitHelper.Descending)
+            foreach (RomanDigitInfo info in RomanDigitHelper.Descending)
             {
-                if (value >= (int)d)
+                if (value >= info.Value)
                 {
-                    sb.Append(d.ToString());
-                    value -= (int)d;
+                    sb.Append(info.Digit.ToString());
+                    value -= info.Value;
                     break;
                 }
             }
@@ -39,18 +39,24 @@ public class RomanNumber
 
     private int to_arabic(string representation)
     {
+        if (representation is null)
+            throw new ArgumentNullException(nameof(representation));
+        
         int result = 0;
-        while (representation.Length > 0)
+        int lastOrder = 4;
+        
+        foreach (RomanDigitInfo info in RomanDigitHelper.Descending)
         {
-            foreach (RomanDigit d in RomanDigitHelper.Descending)
+            if (representation.StartsWith(info.Digit.ToString()) && info.Order < lastOrder)
             {
-                if (representation.StartsWith(d.ToString()))
-                {
-                    result += (int)d;
-                    representation = representation.Substring(d.ToString().Length);
-                }
+                result += info.Value;
+                representation = representation.Substring(info.Digit.ToString().Length);
+                lastOrder = info.Order;
+                if (representation.Length == 0) break;
             }
         }
+        if (representation.Length > 0)
+            throw new FormatException();
         return result;
     }
     

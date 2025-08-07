@@ -34,11 +34,3 @@ public enum RomanDigit
     I = 1
 }
 
-public static class RomanDigitHelper
-{
-    public static readonly List<RomanDigit> Descending = 
-        Enum.GetValues(typeof(RomanDigit))
-            .Cast<RomanDigit>()
-            .OrderByDescending(d => (int)d)
-            .ToList();
-}
