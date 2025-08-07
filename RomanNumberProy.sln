@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RomanLib", "RomanLib\RomanLib.csproj", "{13690711-1F6D-4B4C-8B31-891693BB7E25}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RomanLib.Tests", "RomanLib.Tests\RomanLib.Tests.csproj", "{8180FDBC-1379-4E68-AA18-C1E1B9EE8417}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{13690711-1F6D-4B4C-8B31-891693BB7E25}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{13690711-1F6D-4B4C-8B31-891693BB7E25}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{13690711-1F6D-4B4C-8B31-891693BB7E25}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{13690711-1F6D-4B4C-8B31-891693BB7E25}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8180FDBC-1379-4E68-AA18-C1E1B9EE8417}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8180FDBC-1379-4E68-AA18-C1E1B9EE8417}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8180FDBC-1379-4E68-AA18-C1E1B9EE8417}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8180FDBC-1379-4E68-AA18-C1E1B9EE8417}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
