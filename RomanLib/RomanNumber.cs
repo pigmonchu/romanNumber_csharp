@@ -3,13 +3,19 @@
 using System.Text;
 public class RomanNumber
 {
-    private readonly int _value;
-    public readonly string _representation;
+    public readonly int value;
+    public readonly string representation;
 
     public RomanNumber(int value)
     {
-        _value = value;
-        _representation = to_roman(value);
+        this.value = value;
+        representation = to_roman(value);
+    }
+
+    public RomanNumber(string representation)
+    {
+        this.representation = representation;
+        value = to_arabic(representation);
     }
 
     private String to_roman(int value)
@@ -30,4 +36,23 @@ public class RomanNumber
         }
         return sb.ToString();
     }
+
+    private int to_arabic(string representation)
+    {
+        int result = 0;
+        while (representation.Length > 0)
+        {
+            foreach (RomanDigit d in RomanDigitHelper.Descending)
+            {
+                if (representation.StartsWith(d.ToString()))
+                {
+                    result += (int)d;
+                    representation = representation.Substring(d.ToString().Length);
+                }
+            }
+        }
+        return result;
+    }
+    
+    
 }
