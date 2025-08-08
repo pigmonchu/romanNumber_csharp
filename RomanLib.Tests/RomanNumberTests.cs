@@ -1,13 +1,13 @@
+namespace RomanLib.Tests;
 using System.Numerics;
 
-namespace RomanLib.Tests;
 
 public class RomanNumberTests
 {
     [Fact]
     public void Uno_DeberiaSer_I()
     {
-        Assert.Equal("I", new RomanNumber(1).Representation);
+        Assert.Equal("I", new RomanNumber(new BigInteger(1)).Representation);
     }
 
     [Theory]
@@ -55,9 +55,9 @@ public class RomanNumberTests
     [InlineData(3000, "MMM")]
     [InlineData(3999, "MMMCMXCIX")]
 
-    public void Arabigo_a_romano_menor_10(ulong value, string representation)
+    public void Arabigo_a_romano_menor_10(int value, string representation)
     {
-        var result = new RomanNumber(value);
+        var result = new RomanNumber(new BigInteger(value));
         Assert.Equal(representation, result.Representation);
     }
 
@@ -108,10 +108,10 @@ public class RomanNumberTests
     [InlineData("MMM", 3000)]
     [InlineData("MMMCMXCIX", 3999)]
 
-    public void Romano_a_arabigo_menor_4000(string representation, ulong value)
+    public void Romano_a_arabigo_menor_4000(string representation, int value)
     {
         var result = new RomanNumber(representation);
-        Assert.Equal(value, result.Value);
+        Assert.Equal(new BigInteger(value), result.Value);
     }
 
     [Theory]
@@ -134,49 +134,70 @@ public class RomanNumberTests
         Assert.IsType(exceptionType, ex);
     }
 
+    public static IEnumerable<object[]> ExtendedRomanTestCases()
+    {
+        // Casos básicos con números pequeños para verificar compatibilidad
+        yield return new object[] { BigInteger.Parse("4000"), "IV•" };
+        yield return new object[] { BigInteger.Parse("10001"), "X•I" };
+        yield return new object[] { BigInteger.Parse("1000000"), "M•" };
+        yield return new object[] { BigInteger.Parse("1000001"), "M•I" };
+        yield return new object[] { BigInteger.Parse("1234567"), "MCCXXXIV•DLXVII" };
+        yield return new object[] { BigInteger.Parse("2000000"), "MM•" };
+        yield return new object[] { BigInteger.Parse("3000000"), "MMM•" };
+        yield return new object[] { BigInteger.Parse("4000000"), "IV••" };
+        yield return new object[] { BigInteger.Parse("5673987"), "V••DCLXXIII•CMLXXXVII" };
+        yield return new object[] { BigInteger.Parse("5678987"), "V••DCLXXVIII•CMLXXXVII" };
+        yield return new object[] { BigInteger.Parse("3678987"), "MMMDCLXXVIII•CMLXXXVII" };
+        yield return new object[] { BigInteger.Parse("1000000000"), "M••" };
+        yield return new object[] { BigInteger.Parse("1000000001"), "M••I" };
+        yield return new object[] { BigInteger.Parse("2147483647"), "MMCXLVII••CDLXXXIII•DCXLVII" };
+        yield return new object[] { BigInteger.Parse("4001000"), "IV••I•" };
+        yield return new object[] { BigInteger.Parse("4000001"), "IV••I" };
+        
+        // Casos con números muy grandes que aprovechan BigInteger
+        yield return new object[] { BigInteger.Parse("4000000000"), "IV•••" };
+        yield return new object[] { BigInteger.Parse("18446744073709551615"), "XVIII••••••CDXLVI•••••DCCXLIV••••LXXIII•••DCCIX••DLI•DCXV" };
+        
+        // Casos adicionales con BigInteger para números extremadamente grandes
+        yield return new object[] { BigInteger.Parse("999999999999999999"), "CMXCIX•••••CMXCIX••••CMXCIX•••CMXCIX••CMXCIX•CMXCIX" };
+        yield return new object[] { BigInteger.Parse("1000000000000000000"), "M•••••" };
+    }
+
     [Theory]
-    [InlineData(4000, "IV•")]
-    [InlineData(10001, "X•I")]
-    [InlineData(1000000, "M•")]
-    [InlineData(1000001, "M•I")]
-    [InlineData(1234567, "MCCXXXIV•DLXVII")]
-    [InlineData(2000000, "MM•")]
-    [InlineData(3000000, "MMM•")]
-    [InlineData(4000000, "IV••")]
-    [InlineData(5673987, "V••DCLXXIII•CMLXXXVII")]
-    [InlineData(5678987, "V••DCLXXVIII•CMLXXXVII")]
-    [InlineData(3678987, "MMMDCLXXVIII•CMLXXXVII")]
-    [InlineData(1000000000, "M••")]
-    [InlineData(1000000001, "M••I")]
-    [InlineData(2147483647, "MMCXLVII••CDLXXXIII•DCXLVII")]
-    [InlineData(4001000, "IV••I•")]
-    [InlineData(4000001, "IV••I")]
-    [InlineData(4000000000, "IV•••")] // solo si se permitieran long; si no, ignóralo
-    [InlineData(18446744073709551615, "XVIII••••••CDXLVI•••••DCCXLIV••••LXXIII•••DCCIX••DLI•DCXV")]
-    public void RomanNumber_GeneratesExtendedFormat(ulong value, string expectedRoman)
+    [MemberData(nameof(ExtendedRomanTestCases))]
+    public void RomanNumber_GeneratesExtendedFormat(BigInteger value, string expectedRoman)
     {
         var roman = new RomanNumber(value);
         Assert.Equal(expectedRoman, roman.Representation);
     }
 
+    public static IEnumerable<object[]> ExtendedRomanParseTestCases()
+    {
+        yield return new object[] { "IV•", BigInteger.Parse("4000") };
+        yield return new object[] { "X•I", BigInteger.Parse("10001") };
+        yield return new object[] { "M•", BigInteger.Parse("1000000") };
+        yield return new object[] { "M•I", BigInteger.Parse("1000001") };
+        yield return new object[] { "MCCXXXIV•DLXVII", BigInteger.Parse("1234567") };
+        yield return new object[] { "MM•", BigInteger.Parse("2000000") };
+        yield return new object[] { "MMM•", BigInteger.Parse("3000000") };
+        yield return new object[] { "IV••", BigInteger.Parse("4000000") };
+        yield return new object[] { "V••DCLXXIII•CMLXXXVII", BigInteger.Parse("5673987") };
+        yield return new object[] { "V••DCLXXVIII•CMLXXXVII", BigInteger.Parse("5678987") };
+        yield return new object[] { "MMMDCLXXVIII•CMLXXXVII", BigInteger.Parse("3678987") };
+        yield return new object[] { "M••", BigInteger.Parse("1000000000") };
+        yield return new object[] { "M••I", BigInteger.Parse("1000000001") };
+        yield return new object[] { "MMCXLVII••CDLXXXIII•DCXLVII", BigInteger.Parse("2147483647") };
+        yield return new object[] { "IV••I•", BigInteger.Parse("4001000") };
+        yield return new object[] { "IV••I", BigInteger.Parse("4000001") };
+        
+        // Casos adicionales para BigInteger
+        yield return new object[] { "IV•••", BigInteger.Parse("4000000000") };
+        yield return new object[] { "XVIII••••••CDXLVI•••••DCCXLIV••••LXXIII•••DCCIX••DLI•DCXV", BigInteger.Parse("18446744073709551615") };
+    }
+
     [Theory]
-    [InlineData("IV•", 4000)]
-    [InlineData("X•I", 10001)]
-    [InlineData("M•", 1000000)]
-    [InlineData("M•I", 1000001)]
-    [InlineData("MCCXXXIV•DLXVII", 1234567)]
-    [InlineData("MM•", 2000000)]
-    [InlineData("MMM•", 3000000)]
-    [InlineData("IV••", 4000000)]
-    [InlineData("V••DCLXXIII•CMLXXXVII", 5673987)]
-    [InlineData("V••DCLXXVIII•CMLXXXVII", 5678987)]
-    [InlineData("MMMDCLXXVIII•CMLXXXVII", 3678987)]
-    [InlineData("M••", 1000000000)]
-    [InlineData("M••I", 1000000001)]
-    [InlineData("MMCXLVII••CDLXXXIII•DCXLVII", 2147483647)]
-    [InlineData("IV••I•", 4001000)]
-    [InlineData("IV••I", 4000001)]
-    public void RomanNumber_ParseExtendedRoman(string roman, ulong expected)
+    [MemberData(nameof(ExtendedRomanParseTestCases))]
+    public void RomanNumber_ParseExtendedRoman(string roman, BigInteger expected)
     {
         var number = new RomanNumber(roman);
         Assert.Equal(expected, number.Value);
@@ -287,7 +308,7 @@ public class RomanNumberTests
 
     [Theory]
     [InlineData("X", "IV", "VI")]
-    [InlineData("X", "X", "")] // 0, si usas "N" para representar el cero
+    [InlineData("X", "X", "")] // 0, si usas "" para representar el cero
     public void Resta_De_Romanos(string a, string b, string resultadoEsperado)
     {
         var r1 = new RomanNumber(a);
@@ -345,6 +366,39 @@ public class RomanNumberTests
         var r1 = new RomanNumber(a);
         var r2 = new RomanNumber(b);
         Assert.Throws<DivideByZeroException>(() => _ = r1 / r2);
+    }
+
+    // Tests adicionales específicos para BigInteger
+    [Fact]
+    public void RomanNumber_VeryLargeNumber_Creation()
+    {
+        var veryLargeNumber = BigInteger.Parse("123456789012345678901234567890");
+        var roman = new RomanNumber(veryLargeNumber);
+        Assert.NotNull(roman);
+        Assert.Equal(veryLargeNumber, roman.Value);
+    }
+
+    [Fact]
+    public void RomanNumber_BigInteger_Zero_Representation()
+    {
+        var zero = new RomanNumber(BigInteger.Zero);
+        Assert.Equal("", zero.Representation);
+    }
+
+    [Fact]
+    public void RomanNumber_BigInteger_Arithmetic_Operations()
+    {
+        var big1 = new RomanNumber(BigInteger.Parse("1000000"));
+        var big2 = new RomanNumber(BigInteger.Parse("500000"));
+        
+        var sum = big1 + big2;
+        Assert.Equal(BigInteger.Parse("1500000"), sum.Value);
+        
+        var diff = big1 - big2;
+        Assert.Equal(BigInteger.Parse("500000"), diff.Value);
+        
+        var product = big2 * new RomanNumber(BigInteger.Parse("2"));
+        Assert.Equal(BigInteger.Parse("1000000"), product.Value);
     }
 
 }
@@ -410,6 +464,19 @@ public class RomanNumberComparisonTests
         var r1 = new RomanNumber(a);
         var r2 = new RomanNumber(b);
         Assert.Equal(Math.Sign(esperado), Math.Sign(r1.CompareTo(r2)));
+    }
+
+    // Tests adicionales de comparación con BigInteger
+    [Fact]
+    public void Comparacion_BigInteger_Numeros_Grandes()
+    {
+        var big1 = new RomanNumber(BigInteger.Parse("999999999999"));
+        var big2 = new RomanNumber(BigInteger.Parse("1000000000000"));
+        
+        Assert.True(big1 < big2);
+        Assert.True(big2 > big1);
+        Assert.False(big1 == big2);
+        Assert.True(big1 != big2);
     }
 
 }

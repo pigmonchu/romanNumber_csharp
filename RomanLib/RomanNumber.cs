@@ -4,10 +4,10 @@ using System.Text;
 using System.Numerics;
 public class RomanNumber
 {
-    public readonly ulong Value;
+    public readonly BigInteger Value;
     public readonly string Representation;
 
-    public RomanNumber(ulong value)
+    public RomanNumber(BigInteger value)
     {
         this.Value = value;
         Representation = RomanNumber.to_roman(value);
@@ -19,9 +19,9 @@ public class RomanNumber
         Value = RomanNumber.to_arabic(representation);
     }
 
-    private static ulong Pow(ulong baseValue, int exponent)
+    private static BigInteger Pow(BigInteger baseValue, int exponent)
     {
-        ulong result = 1;
+        BigInteger result = 1;
         for (int i = 0; i < exponent; i++)
         {
             checked { result *= baseValue; }
@@ -29,7 +29,7 @@ public class RomanNumber
         return result;
     }
     
-    private static List<uint> getGroups(ulong value)
+    private static List<uint> getGroups(BigInteger value)
     {
         var grupos = new List<uint>();
         if (value == 0)
@@ -51,7 +51,7 @@ public class RomanNumber
         return grupos;
     }
     
-    private static String to_roman(ulong value)
+    private static String to_roman(BigInteger value)
     {
         var grupos =  getGroups(value);
         var sb = new StringBuilder();
@@ -88,13 +88,13 @@ public class RomanNumber
         return sb.ToString();
     }
 
-    private static ulong to_arabic(string representation)
+    private static BigInteger to_arabic(string representation)
     {
         if (representation is null)
             throw new ArgumentNullException(nameof(representation));
         
         var groups = RomanNumber.ExtractRomanGroups(representation);
-        ulong result = 0;
+        BigInteger result = 0;
         foreach (var (value, order) in groups)
         {
             result += value * RomanNumber.Pow(1000, order);
