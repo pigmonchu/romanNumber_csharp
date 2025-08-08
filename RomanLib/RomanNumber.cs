@@ -4,19 +4,19 @@ using System.Text;
 using System.Numerics;
 public class RomanNumber
 {
-    public readonly ulong value;
-    public readonly string representation;
+    public readonly ulong Value;
+    public readonly string Representation;
 
     public RomanNumber(ulong value)
     {
-        this.value = value;
-        representation = RomanNumber.to_roman(value);
+        this.Value = value;
+        Representation = RomanNumber.to_roman(value);
     }
 
     public RomanNumber(string representation)
     {
-        this.representation = representation;
-        value = RomanNumber.to_arabic(representation);
+        this.Representation = representation;
+        Value = RomanNumber.to_arabic(representation);
     }
 
     private static ulong Pow(ulong baseValue, int exponent)
@@ -32,6 +32,10 @@ public class RomanNumber
     private static List<uint> getGroups(ulong value)
     {
         var grupos = new List<uint>();
+        if (value == 0)
+        {
+            grupos.Add(0);
+        }
         while (value > 0)
         {
             grupos.Add((uint)(value % 1000));
@@ -118,7 +122,7 @@ public class RomanNumber
         return result;
     }
 
-    private static int updateResult(List<(uint, int)> result, int interval = 1)
+    private static int UpdateResult(List<(uint, int)> result, int interval = 1)
     {
         var (value, order) = result[result.Count() - 1];
         order += interval;
@@ -157,7 +161,7 @@ public class RomanNumber
             }
             else if (result.Count() > 0)
             {
-                order = RomanNumber.updateResult(result);
+                order = RomanNumber.UpdateResult(result);
             }
             else
             {
@@ -166,7 +170,7 @@ public class RomanNumber
             }
         }
 
-        order = RomanNumber.updateResult(result, -1);
+        order = RomanNumber.UpdateResult(result, -1);
         
         if (result.Count() > 1 && result[result.Count() - 2].Item2 <= order)
         {
@@ -175,4 +179,62 @@ public class RomanNumber
 
         return result;
     }
+    
+    // <summary>
+    /// Suma dos números romanos.
+    /// </summary>
+    /// <param name="x">Primer número romano</param>
+    /// <param name="y">Segundo número romano</param>
+    /// <returns>Resultado en número romano</returns>
+    public static RomanNumber operator +(RomanNumber x, RomanNumber y)
+    {
+        return new RomanNumber(x.Value + y.Value);
+    }
+    
+    // <summary>
+    /// Resta dos números romanos.
+    /// </summary>
+    /// <param name="x">Primer número romano</param>
+    /// <param name="y">Segundo número romano</param>
+    /// <returns>Resultado en número romano</returns>
+    public static RomanNumber operator -(RomanNumber x, RomanNumber y)
+    {
+        return new RomanNumber(x.Value - y.Value);
+    }
+
+    // <summary>
+    /// Producto de dos números romanos.
+    /// </summary>
+    /// <param name="x">Primer número romano</param>
+    /// <param name="y">Segundo número romano</param>
+    /// <returns>Resultado en número romano</returns>
+    public static RomanNumber operator *(RomanNumber x, RomanNumber y)
+    {
+        return new RomanNumber(x.Value * y.Value);
+    }
+    
+    // <summary>
+    /// Division entera de dos números romanos.
+    /// </summary>
+    /// <param name="x">Primer número romano</param>
+    /// <param name="y">Segundo número romano</param>
+    /// <returns>Resultado en número romano</returns>
+    public static RomanNumber operator /(RomanNumber x, RomanNumber y)
+    {
+        return new RomanNumber(x.Value / y.Value);
+    }
+
+    
+    // <summary>
+    /// Modulo de dos números romanos.
+    /// </summary>
+    /// <param name="x">Primer número romano</param>
+    /// <param name="y">Segundo número romano</param>
+    /// <returns>Resultado en número romano</returns>
+    public static RomanNumber operator %(RomanNumber x, RomanNumber y)
+    {
+        return new RomanNumber(x.Value % y.Value);
+    }
+
+
 }

@@ -7,7 +7,7 @@ public class RomanNumberTests
     [Fact]
     public void Uno_DeberiaSer_I()
     {
-        Assert.Equal("I", new RomanNumber(1).representation);
+        Assert.Equal("I", new RomanNumber(1).Representation);
     }
 
     [Theory]
@@ -58,7 +58,7 @@ public class RomanNumberTests
     public void Arabigo_a_romano_menor_10(ulong value, string representation)
     {
         var result = new RomanNumber(value);
-        Assert.Equal(representation, result.representation);
+        Assert.Equal(representation, result.Representation);
     }
 
     [Theory]
@@ -111,7 +111,7 @@ public class RomanNumberTests
     public void Romano_a_arabigo_menor_4000(string representation, ulong value)
     {
         var result = new RomanNumber(representation);
-        Assert.Equal(value, result.value);
+        Assert.Equal(value, result.Value);
     }
 
     [Theory]
@@ -156,7 +156,7 @@ public class RomanNumberTests
     public void RomanNumber_GeneratesExtendedFormat(ulong value, string expectedRoman)
     {
         var roman = new RomanNumber(value);
-        Assert.Equal(expectedRoman, roman.representation);
+        Assert.Equal(expectedRoman, roman.Representation);
     }
 
     [Theory]
@@ -179,7 +179,7 @@ public class RomanNumberTests
     public void RomanNumber_ParseExtendedRoman(string roman, ulong expected)
     {
         var number = new RomanNumber(roman);
-        Assert.Equal(expected, number.value);
+        Assert.Equal(expected, number.Value);
     }
     
     
@@ -273,5 +273,79 @@ public class RomanNumberTests
         Assert.Throws<FormatException>(() => RomanNumber.ExtractRomanGroups(roman));
     }
 
+
+    [Theory]
+    [InlineData("X", "IV", "XIV")]
+    [InlineData("X", "X", "XX")]
+    public void Suma_De_Romanos(string a, string b, string resultadoEsperado)
+    {
+        var r1 = new RomanNumber(a);
+        var r2 = new RomanNumber(b);
+        var resultado = r1 + r2;
+        Assert.Equal(resultadoEsperado, resultado.Representation);
+    }
+
+    [Theory]
+    [InlineData("X", "IV", "VI")]
+    [InlineData("X", "X", "")] // 0, si usas "N" para representar el cero
+    public void Resta_De_Romanos(string a, string b, string resultadoEsperado)
+    {
+        var r1 = new RomanNumber(a);
+        var r2 = new RomanNumber(b);
+        var resultado = r1 - r2;
+        Assert.Equal(resultadoEsperado, resultado.Representation);
+    }
+
+    [Theory]
+    [InlineData("X", "IV", "XL")]
+    [InlineData("X", "X", "C")]
+    public void Multiplicacion_De_Romanos(string a, string b, string resultadoEsperado)
+    {
+        var r1 = new RomanNumber(a);
+        var r2 = new RomanNumber(b);
+        var resultado = r1 * r2;
+        Assert.Equal(resultadoEsperado, resultado.Representation);
+    }
+
+    [Theory]
+    [InlineData("X", "IV", "II")]
+    [InlineData("X", "X", "I")]
+    public void Division_Entera_De_Romanos(string a, string b, string resultadoEsperado)
+    {
+        var r1 = new RomanNumber(a);
+        var r2 = new RomanNumber(b);
+        var resultado = r1 / r2;
+        Assert.Equal(resultadoEsperado, resultado.Representation);
+    }
+
+    [Theory]
+    [InlineData("X", "IV", "II")]
+    [InlineData("X", "X", "")]
+    public void Modulo_De_Romanos(string a, string b, string resultadoEsperado)
+    {
+        var r1 = new RomanNumber(a);
+        var r2 = new RomanNumber(b);
+        var resultado = r1 % r2;
+        Assert.Equal(resultadoEsperado, resultado.Representation);
+    }
+
+    [Theory]
+    [InlineData("IV", "X")] // 4 - 10 no permitido
+    public void Resta_Negativa_Lanza_Excepcion(string a, string b)
+    {
+        var r1 = new RomanNumber(a);
+        var r2 = new RomanNumber(b);
+        Assert.Throws<ArgumentException>(() => _ = r1 - r2);
+    }
+
+    [Theory]
+    [InlineData("X", "")] // división por cero
+    public void Division_Por_Cero_Lanza_Excepcion(string a, string b)
+    {
+        var r1 = new RomanNumber(a);
+        var r2 = new RomanNumber(b);
+        Assert.Throws<DivideByZeroException>(() => _ = r1 / r2);
+    }
+    
 
 }
