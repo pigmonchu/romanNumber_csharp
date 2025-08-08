@@ -335,7 +335,7 @@ public class RomanNumberTests
     {
         var r1 = new RomanNumber(a);
         var r2 = new RomanNumber(b);
-        Assert.Throws<ArgumentException>(() => _ = r1 - r2);
+        Assert.Throws<FormatException>(() => _ = r1 - r2);
     }
 
     [Theory]
@@ -346,6 +346,70 @@ public class RomanNumberTests
         var r2 = new RomanNumber(b);
         Assert.Throws<DivideByZeroException>(() => _ = r1 / r2);
     }
-    
+
+}
+
+public class RomanNumberComparisonTests
+{
+    [Theory]
+    [InlineData("X", "X", true)]
+    [InlineData("X", "IX", false)]
+    public void Igualdad_De_Numeros_Romanos(string a, string b, bool esperado)
+    {
+        var r1 = new RomanNumber(a);
+        var r2 = new RomanNumber(b);
+        Assert.Equal(esperado, r1 == r2);
+        Assert.Equal(!esperado, r1 != r2);
+    }
+
+    [Theory]
+    [InlineData("IX", "X", true)]
+    [InlineData("X", "X", false)]
+    public void Menor_Que(string a, string b, bool esperado)
+    {
+        var r1 = new RomanNumber(a);
+        var r2 = new RomanNumber(b);
+        Assert.Equal(esperado, r1 < r2);
+    }
+
+    [Theory]
+    [InlineData("X", "IX", true)]
+    [InlineData("X", "X", false)]
+    public void Mayor_Que(string a, string b, bool esperado)
+    {
+        var r1 = new RomanNumber(a);
+        var r2 = new RomanNumber(b);
+        Assert.Equal(esperado, r1 > r2);
+    }
+
+    [Theory]
+    [InlineData("X", "X", true)]
+    [InlineData("IX", "X", true)]
+    public void Menor_O_Igual_Que(string a, string b, bool esperado)
+    {
+        var r1 = new RomanNumber(a);
+        var r2 = new RomanNumber(b);
+        Assert.Equal(esperado, r1 <= r2);
+    }
+
+    [Theory]
+    [InlineData("X", "X", true)]
+    [InlineData("X", "IX", true)]
+    public void Mayor_O_Igual_Que(string a, string b, bool esperado)
+    {
+        var r1 = new RomanNumber(a);
+        var r2 = new RomanNumber(b);
+        Assert.Equal(esperado, r1 >= r2);
+    }
+
+    [Theory]
+    [InlineData("X", "X", 0)]
+    [InlineData("X", "IX", 1)]
+    public void Comparacion_Con_CompareTo(string a, string b, int esperado)
+    {
+        var r1 = new RomanNumber(a);
+        var r2 = new RomanNumber(b);
+        Assert.Equal(Math.Sign(esperado), Math.Sign(r1.CompareTo(r2)));
+    }
 
 }

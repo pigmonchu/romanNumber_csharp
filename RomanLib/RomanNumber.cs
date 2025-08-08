@@ -236,5 +236,32 @@ public class RomanNumber
         return new RomanNumber(x.Value % y.Value);
     }
 
+    public static bool operator ==(RomanNumber a, RomanNumber b) =>
+        a.Value == b.Value;
 
+    public static bool operator !=(RomanNumber a, RomanNumber b) =>
+        !(a == b);
+
+    public override bool Equals(object obj) =>
+        obj is RomanNumber other && this.Value == other.Value;
+
+    public override int GetHashCode() =>
+        Value.GetHashCode();
+
+    public static bool operator <(RomanNumber a, RomanNumber b) =>
+        a.Value < b.Value;
+
+    public static bool operator >(RomanNumber a, RomanNumber b) =>
+        a.Value > b.Value;
+
+    public static bool operator <=(RomanNumber a, RomanNumber b) =>
+        a.Value <= b.Value;
+
+    public static bool operator >=(RomanNumber a, RomanNumber b) =>
+        a.Value >= b.Value;
+
+    public int CompareTo(RomanNumber other)
+    {
+        return Value.CompareTo(other.Value);
+    }
 }
