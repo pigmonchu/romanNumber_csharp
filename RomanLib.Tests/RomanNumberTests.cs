@@ -111,7 +111,7 @@ public class RomanNumberTests
     public void Romano_a_arabigo_menor_4000(string representation, int value)
     {
         var result = new RomanNumber(representation);
-        Assert.Equal(new BigInteger(value), result.Value);
+        Assert.Equal(new BigInteger(value), result.AbsValue);
     }
 
     [Theory]
@@ -200,7 +200,7 @@ public class RomanNumberTests
     public void RomanNumber_ParseExtendedRoman(string roman, BigInteger expected)
     {
         var number = new RomanNumber(roman);
-        Assert.Equal(expected, number.Value);
+        Assert.Equal(expected, number.AbsValue);
     }
     
     
@@ -352,11 +352,11 @@ public class RomanNumberTests
 
     [Theory]
     [InlineData("IV", "X")] // 4 - 10 no permitido
-    public void Resta_Negativa_Lanza_Excepcion(string a, string b)
+    public void Resta_Negativa_Ya_no_Lanza_Excepcion(string a, string b)
     {
         var r1 = new RomanNumber(a);
         var r2 = new RomanNumber(b);
-        Assert.Throws<FormatException>(() => _ = r1 - r2);
+        Assert.Equal(new RomanNumber(-6), r1 - r2);
     }
 
     [Theory]
@@ -372,10 +372,11 @@ public class RomanNumberTests
     [Fact]
     public void RomanNumber_VeryLargeNumber_Creation()
     {
-        var veryLargeNumber = BigInteger.Parse("123456789012345678901234567890");
+        var veryLargeNumber = BigInteger.Parse("1123456789012345678901234567890");
         var roman = new RomanNumber(veryLargeNumber);
         Assert.NotNull(roman);
-        Assert.Equal(veryLargeNumber, roman.Value);
+        Assert.Equal(veryLargeNumber, roman.AbsValue);
+        Assert.Equal("MCXXIII•••••••••CDLVI••••••••DCCLXXXIX•••••••XII••••••CCCXLV•••••DCLXXVIII••••CMI•••CCXXXIV••DLXVII•DCCCXC", roman.Representation);
     }
 
     [Fact]
@@ -392,13 +393,13 @@ public class RomanNumberTests
         var big2 = new RomanNumber(BigInteger.Parse("500000"));
         
         var sum = big1 + big2;
-        Assert.Equal(BigInteger.Parse("1500000"), sum.Value);
+        Assert.Equal(BigInteger.Parse("1500000"), sum.AbsValue);
         
         var diff = big1 - big2;
-        Assert.Equal(BigInteger.Parse("500000"), diff.Value);
+        Assert.Equal(BigInteger.Parse("500000"), diff.AbsValue);
         
         var product = big2 * new RomanNumber(BigInteger.Parse("2"));
-        Assert.Equal(BigInteger.Parse("1000000"), product.Value);
+        Assert.Equal(BigInteger.Parse("1000000"), product.AbsValue);
     }
 
 }
@@ -479,4 +480,57 @@ public class RomanNumberComparisonTests
         Assert.True(big1 != big2);
     }
 
+}
+
+public class RomanNumberNegativeTests
+{
+    [Theory]
+    [InlineData(0, "")]
+    [InlineData(-1, "-I")]
+    [InlineData(-4, "-IV")]
+    [InlineData(-9, "-IX")]
+    [InlineData(-44, "-XLIV")]
+    [InlineData(-99, "-XCIX")]
+    [InlineData(-400, "-CD")]
+    [InlineData(-944, "-CMXLIV")]
+    [InlineData(-1000, "-M")]
+    [InlineData(-3999, "-MMMCMXCIX")]
+    [InlineData(-10000, "-X•")]
+    [InlineData(-4567890, "-IV••DLXVII•DCCCXC")]
+    [InlineData(-3567890, "-MMMDLXVII•DCCCXC")]
+    [InlineData(-10000000, "-X••")]
+    public void RomanNumber_ShouldHaveCorrectNegativeRepresentation(long value, string expected)
+    {
+        var roman = new RomanNumber(new BigInteger(value));
+        Assert.Equal(expected, roman.Representation);
+    }
+
+    [Theory]
+    [InlineData("-I", 1, true)]
+    [InlineData("-IV", 4, true)]
+    [InlineData("-MMMCMXCIX", 3999, true)]
+    [InlineData("-X•", 10000, true)]
+    [InlineData("-IV••DLXVII•DCCCXC", 4567890, true)]
+    [InlineData("-MMMDLXVII•DCCCXC", 3567890, true)]
+    [InlineData("-X••", 10000000, true)]
+    public void RomanNumber_ShouldParseNegativeRepresentationCorrectly(string representation, long value_expected, bool negative_expected)
+    {
+        var roman = new RomanNumber(representation);
+        Assert.Equal(new BigInteger(value_expected), roman.AbsValue);
+        Assert.Equal(negative_expected, roman.Negative);
+    }
+
+    [Fact]
+    public void Zero_ShouldHaveEmptyRepresentation()
+    {
+        var roman = new RomanNumber(BigInteger.Zero);
+        Assert.Equal("", roman.Representation);
+    }
+
+    [Fact]
+    public void NegativeZero_ShouldAlsoBeEmpty()
+    {
+        var roman = new RomanNumber(BigInteger.Zero * -1);
+        Assert.Equal("", roman.Representation);
+    }
 }

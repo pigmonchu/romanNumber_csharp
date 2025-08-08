@@ -4,19 +4,32 @@ using System.Text;
 using System.Numerics;
 public class RomanNumber
 {
-    public readonly BigInteger Value;
+    public readonly BigInteger AbsValue;
     public readonly string Representation;
+    public readonly bool Negative;
+
+    private BigInteger real_value
+    {
+        get
+        {
+            return AbsValue * (Negative ? -1 : 1);
+        }
+    }
 
     public RomanNumber(BigInteger value)
     {
-        this.Value = value;
-        Representation = RomanNumber.to_roman(value);
+        Negative = value < 0;
+        this.AbsValue = BigInteger.Abs(value);
+        Representation = $"{(Negative ? "-" : "")}{RomanNumber.to_roman(this.AbsValue)}";
     }
 
     public RomanNumber(string representation)
     {
+        if (representation is null)
+            throw new ArgumentNullException(nameof(representation));
+        Negative = representation != ""  && representation[0] == '-';
         this.Representation = representation;
-        Value = RomanNumber.to_arabic(representation);
+        AbsValue = RomanNumber.to_arabic(representation.Substring(Negative ? 1 : 0));
     }
 
     private static BigInteger Pow(BigInteger baseValue, int exponent)
@@ -89,10 +102,7 @@ public class RomanNumber
     }
 
     private static BigInteger to_arabic(string representation)
-    {
-        if (representation is null)
-            throw new ArgumentNullException(nameof(representation));
-        
+    { 
         var groups = RomanNumber.ExtractRomanGroups(representation);
         BigInteger result = 0;
         foreach (var (value, order) in groups)
@@ -188,7 +198,7 @@ public class RomanNumber
     /// <returns>Resultado en número romano</returns>
     public static RomanNumber operator +(RomanNumber x, RomanNumber y)
     {
-        return new RomanNumber(x.Value + y.Value);
+        return new RomanNumber(x.real_value + y.real_value);
     }
     
     // <summary>
@@ -199,7 +209,7 @@ public class RomanNumber
     /// <returns>Resultado en número romano</returns>
     public static RomanNumber operator -(RomanNumber x, RomanNumber y)
     {
-        return new RomanNumber(x.Value - y.Value);
+        return new RomanNumber(x.real_value - y.real_value);
     }
 
     // <summary>
@@ -210,7 +220,7 @@ public class RomanNumber
     /// <returns>Resultado en número romano</returns>
     public static RomanNumber operator *(RomanNumber x, RomanNumber y)
     {
-        return new RomanNumber(x.Value * y.Value);
+        return new RomanNumber(x.real_value * y.real_value);
     }
     
     // <summary>
@@ -221,7 +231,7 @@ public class RomanNumber
     /// <returns>Resultado en número romano</returns>
     public static RomanNumber operator /(RomanNumber x, RomanNumber y)
     {
-        return new RomanNumber(x.Value / y.Value);
+        return new RomanNumber(x.real_value / y.real_value);
     }
 
     
@@ -233,35 +243,35 @@ public class RomanNumber
     /// <returns>Resultado en número romano</returns>
     public static RomanNumber operator %(RomanNumber x, RomanNumber y)
     {
-        return new RomanNumber(x.Value % y.Value);
+        return new RomanNumber(x.real_value % y.real_value);
     }
 
     public static bool operator ==(RomanNumber a, RomanNumber b) =>
-        a.Value == b.Value;
+        a.real_value == b.real_value;
 
     public static bool operator !=(RomanNumber a, RomanNumber b) =>
-        !(a == b);
+        !(a.real_value == b.real_value);
 
     public override bool Equals(object obj) =>
-        obj is RomanNumber other && this.Value == other.Value;
+        obj is RomanNumber other && this.real_value == other.real_value;
 
     public override int GetHashCode() =>
-        Value.GetHashCode();
+        real_value.GetHashCode();
 
     public static bool operator <(RomanNumber a, RomanNumber b) =>
-        a.Value < b.Value;
+        a.real_value < b.real_value;
 
     public static bool operator >(RomanNumber a, RomanNumber b) =>
-        a.Value > b.Value;
+        a.real_value > b.real_value;
 
     public static bool operator <=(RomanNumber a, RomanNumber b) =>
-        a.Value <= b.Value;
+        a.real_value <= b.real_value;
 
     public static bool operator >=(RomanNumber a, RomanNumber b) =>
-        a.Value >= b.Value;
+        a.real_value >= b.real_value;
 
     public int CompareTo(RomanNumber other)
     {
-        return Value.CompareTo(other.Value);
+        return real_value.CompareTo(other.real_value);
     }
 }
