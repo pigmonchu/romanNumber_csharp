@@ -1,6 +1,4 @@
-﻿using Microsoft.VisualStudio.TestPlatform.Utilities;
-
-namespace Calculator.ConsoleView.Tests;
+﻿namespace Calculator.ConsoleView.Tests;
 
 public class ConsoleViewTests
 {
@@ -8,7 +6,7 @@ public class ConsoleViewTests
     public void MostrarMenu_1_Devuelve_Iniciar()
     {
         Console.SetIn(new StringReader("1\n"));
-        
+
         Console.SetOut(new StringWriter());
 
         var vista = new ConsoleView();
@@ -33,5 +31,68 @@ public class ConsoleViewTests
 
         Assert.Equal(resultado, opt);
         Assert.Contains("Opcion incorrecta", output.ToString());
+    }
+
+    [Fact]
+    public void MenuComposerMuestraCabeceraYOpciones()
+    {
+        var input = new StringReader("1\n");
+        var output = new StringWriter();
+
+        var composer = new MenuComposer();
+        var option = composer.MostrarMenu(input, output);
+
+        Assert.Equal(MenuOption.Iniciar, option);
+        Assert.Contains("1 - Iniciar", output.ToString());
+        Assert.Contains("2 - Seguir", output.ToString());
+        Assert.Contains("3 - Salir", output.ToString());
+    }
+
+    [Fact]
+    public void MenuComposerSeleccion_Valida_Directa_Devuelve_Iniciar()
+    {
+        var input = new StringReader("0\n1\n");
+        var output = new StringWriter();
+
+        var composer = new MenuComposer();
+        var option = composer.MostrarMenu(input, output);
+
+        Assert.Equal(MenuOption.Iniciar, option);
+        Assert.Contains("Opcion incorrecta", output.ToString());
+    }
+
+    [Fact]
+    public void MenuComposerSeleccion_Invalida_Luego_Valida_Devuelve_Seguir()
+    {
+        var input = new StringReader("0\n2\n");
+        var output = new StringWriter();
+
+        var composer = new MenuComposer();
+        var option = composer.MostrarMenu(input, output);
+
+        Assert.Equal(MenuOption.Seguir, option);
+        Assert.Contains("Opcion incorrecta", output.ToString());
+    }
+
+    [Fact]
+    public void MenuComposerRepite_Hasta_Valida_Conteo_De_Errores()
+    {
+        var input = new StringReader("0\nkk\n3\n");
+        var output = new StringWriter();
+
+        var composer = new MenuComposer();
+        var option = composer.MostrarMenu(input, output);
+
+        Assert.Equal(MenuOption.Salir, option);
+        Assert.Contains("Opcion incorrecta", output.ToString());
+        var count = output.ToString().Split("Opcion incorrecta").Length - 1;
+
+        Assert.Equal(2, count);
+    }
+
+    [Fact]
+    public void Delegacion_Devuelve_Lo_Que_Composer_Devuelve()
+    {
+        
     }
 }

@@ -1,31 +1,16 @@
-using System;
-using System.Runtime.InteropServices;
-
 namespace Calculator.ConsoleView;
 
 public class ConsoleView
 {
-    public MenuOption MostrarMenu() 
+    private readonly MenuComposer _composer;
+
+    public ConsoleView(MenuComposer? composer = null)
     {
-        Console.WriteLine("CALCULATUM");
-        Console.WriteLine("==========");
+        _composer = composer ?? new MenuComposer();
+    }
 
-        foreach (MenuOption opt in Enum.GetValues(typeof(MenuOption))) {
-            Console.WriteLine($"{(int)opt} - {opt}");
-        }
-
-        Console.WriteLine("");
-        do
-        {
-            Console.Write("Seleccione opción: ");
-            var option = Console.ReadLine();
-
-            if (int.TryParse(option, out int numero) && Enum.IsDefined(typeof(MenuOption), numero))
-            {
-                return (MenuOption)numero;
-            }
-            Console.WriteLine("Opcion incorrecta");
-        } while (true);
-
+    public MenuOption MostrarMenu()
+    {
+        return _composer.MostrarMenu(Console.In, Console.Out);
     }
 }
